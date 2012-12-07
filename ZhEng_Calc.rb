@@ -66,15 +66,15 @@ class ZhEng_Calc
   end
   
   def translate
-    @tabulous= "<table id='tabulous'><tbody><tr><td>#{@numb}</td></tr>"
+    @tabulous= "<table id='tabulous'><tbody><tr><td><span class='tt' title='Original form'>#{@numb}</span></td></tr>"
     standardize
-    @root_node.content= {"in"=>@numb, "out"=>nil, "m"=>nil, "n"=>"Standarized form."}
+    @root_node.content= {"in"=>@numb, "out"=>nil, "m"=>nil, "n"=>"Standarized form"}
 
     @numb= compute_number(@numb, @root_node)
     @tabulous << "<tr><td>" + draw_tree(@root_node) + "</td></tr>"
     
     @numb= englishify
-    @tabulous << "<tr><td>#{@numb}</td></tr></tbody></table>"
+    @tabulous << "<tr><td><span class='tt' title='English form'>#{@numb}</span></td></tr></tbody></table>"
   end
   
   def standardize
@@ -112,7 +112,7 @@ class ZhEng_Calc
   end
   
   def compute_number(str, node)
-    notes= []
+    notes= []   # [node.content["n"]] ## THE STANDARIZE TEXT SHOWS IN THE BOTTOM ROW!!!
     left, right, multi, chi = break_by_highest_multiplier(str)
     
     child_left=  Tree::TreeNode.new("#{node.name}l", {"in"=>left, "out"=>nil, "m"=>nil})
@@ -159,7 +159,7 @@ class ZhEng_Calc
     end
     node.content["out"]=sol.to_f.to_s
     node.content["m"]=chi if chi
-    node.content["n"]=notes.join(", ") if notes!=[]
+    node.content["n"]=notes.join(", ") if notes!=[] #if (node.content["n"]=="" and notes!=[])
     
     return sol
   end
