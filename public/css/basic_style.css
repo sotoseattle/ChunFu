@@ -1,0 +1,23 @@
+span.vip{
+  background-color: yellow;
+}
+
+#expo{
+  width: 100%;
+}
+
+#tabulous > th,tr,td{
+  width: auto;
+  white-space: nowrap;
+  text-align: center;
+  vertical-align: top;
+  color: blue;
+  border: 1px solid red;
+}
+
+td.low{
+  vertical-align: bottom;
+}
+
+
+
