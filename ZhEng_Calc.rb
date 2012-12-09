@@ -31,16 +31,13 @@ class ZhEng_Calc
   end
   
   def htmlify(node, show_input=true)
+    key= show_input ? "in" : "out"
+    
+    nota= "class='tt' title='"+ node.content["n"]["#{key}"] +"'"
+    base = node.content["#{key}"].to_s
+    
     chi= node.content["m"]
-    
-    if node.content["n"].to_s!=""
-      a=node.content["n"]
-      nota= "class='tt' title='#{a}'"
-    end
-    
-    
-    base = show_input ? node.content["in"].to_s : node.content["out"].to_s
-    base= "<span #{nota} >"+(base=="" ? "-" : base)+"</span>"
+    base= "<span #{nota}>"+(base=="" ? "-" : "<span>"+base+"</span>")+"</span>"
     base.gsub!(chi, "</span><span class='vip'>#{chi}</span><span>") if (show_input and chi)
     base
   end
@@ -48,7 +45,7 @@ class ZhEng_Calc
   def draw_tree(node)
     kk = ""
     if node.has_children?
-      kk << "<table><tbody><tr><td colspan='2>#{htmlify(node, true)}</td></tr><tr>"
+      kk << "<table><tbody><tr><td colspan='2'>#{htmlify(node, true)}</td></tr><tr>"
       
       node.children.each{|kid| kk << "<td>"+draw_tree(kid)+"</td>"}
       #l, r= node.children
@@ -66,9 +63,9 @@ class ZhEng_Calc
   end
   
   def translate
-    @tabulous= "<table id='tabulous'><tbody><tr><td><span class='tt' title='Original form'>#{@numb}</span></td></tr>"
+    @tabulous= "<table id='tabulous'><tbody><tr><td><span class='tt' title='Original form, is first standarized into SC and western digits and punctuation'>#{@numb}</span></td></tr>"
     standardize
-    @root_node.content= {"in"=>@numb, "out"=>nil, "m"=>nil, "n"=>"Standarized form"}
+    @root_node.content= {"in"=>@numb, "out"=>nil, "m"=>nil}
 
     @numb= compute_number(@numb, @root_node)
     @tabulous << "<tr><td>" + draw_tree(@root_node) + "</td></tr>"
@@ -112,13 +109,18 @@ class ZhEng_Calc
   end
   
   def compute_number(str, node)
-    notes= []   # [node.content["n"]] ## THE STANDARIZE TEXT SHOWS IN THE BOTTOM ROW!!!
+    notes= {"in"=>"", "out"=> ""}   ## THE STANDARIZE TEXT SHOWS IN THE BOTTOM ROW!!!
     left, right, multi, chi = break_by_highest_multiplier(str)
     
-    child_left=  Tree::TreeNode.new("#{node.name}l", {"in"=>left, "out"=>nil, "m"=>nil})
-    child_right= Tree::TreeNode.new("#{node.name}r", {"in"=>right, "out"=>nil, "m"=>nil})
+    child_left=  Tree::TreeNode.new("#{node.name}l", {"in"=>left, "out"=>nil, "m"=>nil, "n"=>notes})
+    child_right= Tree::TreeNode.new("#{node.name}r", {"in"=>right, "out"=>nil, "m"=>nil,"n"=>notes})
     node << child_left if left
     node << child_right if right
+    
+    if chi
+      notes["in"]<< "we break by the multiplier #{multi}"
+    end
+    
     
     unless multi
       sol = str.numeric? ? BigDecimal.new(str) : nil
@@ -127,10 +129,10 @@ class ZhEng_Calc
         if right.match(/^[1-9][0-9]*$/) && !left.match(/\./) # SPECIFIC CASE: Disambiguation of OOs
           total_left = (left=='0' ? 0 : compute_number(left, child_left))
           if total_left==0
-            notes << "nothing to the left, we compute only the right side"
+            notes["out"] << "nothing to the left, we only calculate the right side"
             sol = BigDecimal.new(right)
           else
-            notes << "left & right become #{total_left.to_i}.#{right.to_i} and then multiplied by #{multi}"
+            notes["out"] << "to disambiguate left & right become #{total_left.to_i}.#{right.to_i} and then we multiply by factor #{multi}"
             sol= BigDecimal.new("#{total_left.to_i}.#{right.to_i}")*multi
           end
         else
@@ -142,25 +144,25 @@ class ZhEng_Calc
             if total_left==0
               total_left= multi
             else
-              notes << "the left part is multiplied: #{total_left.to_f} x #{multi}"
+              notes["out"] << "the left part is multiplied by factor [#{total_left.to_f} x #{multi}]"
               total_left= BigDecimal.new(total_left)*multi
             end
           end
-          notes << "left and right are added = #{total_left.to_f} + #{total_right.to_f}"
+          notes["out"] << "left and right are added [#{total_left.to_f} + #{total_right.to_f}]"
           sol = total_left + total_right
         end
       elsif left!=""  # right is empty
-        notes << "nothing to the right, we compute only the left side and then multiply by #{multi}"
+        notes["out"] << "nothing to the right, we only calculate the left side and then multiply by factor #{multi}"
         sol = compute_number(left, child_left)*multi
       else
-        notes << "nothing to the left, nor right, the solution is the factor #{multi}"
+        notes["out"] << "nothing to the left, nor right, the solution is the factor #{multi}"
         sol = multi
       end
     end
     node.content["out"]=sol.to_f.to_s
     node.content["m"]=chi if chi
-    node.content["n"]=notes.join(", ") if notes!=[] #if (node.content["n"]=="" and notes!=[])
     
+    node.content["n"]=notes
     return sol
   end
   
