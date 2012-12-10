@@ -2,7 +2,7 @@
 require 'rubygems'
 require 'bigdecimal'
 require 'tree'
-require 'awesome_print'
+#require 'awesome_print'
 
 XTN_Standardize = [["[○〇Ｏ零]", '0'], ["[１一壹幺]", '1'], ["[２二兩貳两贰]", '2'], ["[３三參叁叄]", '3'], ["[４四肆]", '4'], 
   ["[５五伍]", '5'], ["[６六陸陆]", '6'], ["[７七柒]", '7'], ["[８八捌]", '8'], ["[９九玖]", '9'], 

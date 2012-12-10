@@ -5,7 +5,7 @@ require 'sinatra'
 require 'sinatra/base'
 
 require 'json/pure'
-require 'awesome_print'
+#require 'awesome_print'
 
 load './ZhEng_Calc.rb'
 
