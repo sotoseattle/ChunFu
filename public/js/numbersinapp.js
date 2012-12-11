@@ -13,7 +13,6 @@ var initialize_index = {
 	
 	turn_on_form: function(){
 		$("input#mysubmit").click(function(){
-		  
 		  $("table#tabulary > tbody > tr").remove();
 		  
 		  chinumber= $("input#sourcestring").val();
@@ -41,7 +40,11 @@ var initialize_index = {
 	}
 }
 
-
+$(document).keypress(function(e) {
+  if(e.which == 13 && $("#sourcestring:focus").length==1) {
+    $("input#mysubmit").click();
+  }
+});
 
 $(function () {
 	initialize_index.turn_on_form();

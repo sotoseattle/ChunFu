@@ -46,16 +46,8 @@ class ZhEng_Calc
     kk = ""
     if node.has_children?
       kk << "<table><tbody><tr><td colspan='2'>#{htmlify(node, true)}</td></tr><tr>"
-      
       node.children.each{|kid| kk << "<td>"+draw_tree(kid)+"</td>"}
-      #l, r= node.children
-      #kk << "<td>"+draw_tree(l)+"</td>"
-      #kk << "<td class='low'>"+ node.content["m"] +"</td>"
-      #kk << "<td>"+draw_tree(r)+"</td>"
-      
-      kk << "</tr>"
-      kk << "<tr><td colspan='2'>#{htmlify(node, false)}</td></tr>"
-      kk << "</tbody></table>"
+      kk << "</tr><tr><td colspan='2'>#{htmlify(node, false)}</td></tr></tbody></table>"
     else
       kk << "#{htmlify(node, true)}"
     end
