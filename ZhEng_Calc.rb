@@ -49,7 +49,7 @@ class ZhEng_Calc
       node.children.each{|kid| kk << "<td>"+draw_tree(kid)+"</td>"}
       kk << "</tr><tr><td colspan='2'>#{htmlify(node, false)}</td></tr></tbody></table>"
     else
-      kk << "#{htmlify(node, true)}"
+      kk << "<table><tbody><tr><td class='single'>#{htmlify(node, true)}</td></tr></tbody></table>"
     end
     kk
   end
@@ -63,7 +63,7 @@ class ZhEng_Calc
     @tabulous << "<tr><td>" + draw_tree(@root_node) + "</td></tr>"
     
     @numb= englishify
-    @tabulous << "<tr><td><span class='tt' title='English form'>#{@numb}</span></td></tr></tbody></table>"
+    @tabulous << "<tr><td><span class='tt' title='English form'>#{@numb}</span></td></tr></tbody></table>"    
   end
   
   def standardize

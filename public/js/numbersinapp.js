@@ -22,7 +22,7 @@ var initialize_index = {
   		  data: {sourcestring: chinumber},
   		  success: function(data){
   		    $("input#sourcestring").val("");
-  		    $("table#tabulous").remove();
+  		    $("#expo").html("");
   		    
   		    answer= $.parseJSON(data)
   		    $("#expo").append(answer.sol)

@@ -19,5 +19,9 @@ td.low{
   vertical-align: bottom;
 }
 
+td.single{
+  padding-top: 5px;
+}
+
 
 

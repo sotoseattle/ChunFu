@@ -1,0 +1,123 @@
+body {
+width: 50%;
+margin-right: auto;
+margin-left: auto;
+margin-top: 10px;
+font-family: geneva;
+}
+
+table {
+/*background-color: #cc0000;*/
+padding: 5px;
+}
+
+#expo {
+clear: both;
+}
+
+#top {
+border-top: 2px solid black;
+padding-left: 95px;
+padding-top: 30px;
+padding-bottom: 0;
+}
+
+#number1 {
+border-top: 1px solid #00BAFF;
+border-bottom: 1px solid #00BAFF;
+padding-left: 90px;
+padding-top: 15px;
+}
+
+#topnumber {
+padding-right: 60px;
+}
+
+#bottom {
+border-bottom: 2px solid black;
+}
+
+#head {
+float: left; 
+width: 70px;
+padding-right: 5px; 
+padding-top: 40px; 
+padding-left: 40px;
+color:#792a2f;
+}
+
+#subhead {
+float: left; 
+width: 220px;
+padding-right: 5px; 
+padding-top: 40px; 
+font-size: 1em;
+}
+
+#tabulary {
+float: left; 
+width: 200px;
+padding-left: 20px;
+padding-top: 38px;
+}
+span.vip {
+  background-color: #FAF70C;
+}
+
+#tabulous > th,tr,td{
+    color: black;
+    margin: 10px 200px;
+    padding: 10px 20px;
+    text-align: center;
+    vertical-align: top;
+    white-space: nowrap;
+}
+
+.together {
+border-collapse: collapse;
+}
+
+td.low{
+  vertical-align: bottom;
+}
+
+#footer {
+padding-left: 35px;
+}
+
+#mysubmit {
+box-shadow: 3px 3px 2px #63544f;
+}
+
+#sourcestring {
+border-radius: 3px 3px 3px 3px;
+box-shadow: 1px 1px 1px #0D0D0D;
+}
+
+hr {
+margin-right: auto;
+margin-left: auto;
+border: none; 
+background-color: #0F153D; 
+height: 2px;
+}
+
+.separate {
+border-top: 1px solid #7b2c31;
+}
+
+.single {
+padding-top: 4px;
+}
+
+a {
+color: #bc3539;
+}
+
+a:hover {
+color: #7b2c31;
+}
+
+#toprow {
+padding-left: 100;
+}
