@@ -45,9 +45,9 @@ class ZhEng_Calc
   def draw_tree(node)
     kk = ""
     if node.has_children?
-      kk << "<table><tbody><tr><td colspan='2'>#{htmlify(node, true)}</td></tr><tr>"
-      node.children.each{|kid| kk << "<td>"+draw_tree(kid)+"</td>"}
-      kk << "</tr><tr><td colspan='2'>#{htmlify(node, false)}</td></tr></tbody></table>"
+      kk << "<table class='together'><tbody><tr><td colspan='2'>#{htmlify(node, true)}</td></tr><tr>"
+      node.children.each{|kid| kk << "<td  class='separate'>"+draw_tree(kid)+"</td>"}
+      kk << "</tr><tr><td colspan='2' class='join'>#{htmlify(node, false)}</td></tr></tbody></table>"
     else
       kk << "<table><tbody><tr><td class='single'>#{htmlify(node, true)}</td></tr></tbody></table>"
     end
@@ -55,15 +55,15 @@ class ZhEng_Calc
   end
   
   def translate
-    @tabulous= "<table id='tabulous'><tbody><tr><td><span class='tt' title='Original form, is first standarized into SC and western digits and punctuation'>#{@numb}</span></td></tr>"
+    @tabulous= "<table id='tabulous'><tbody><tr><td id='top'><span class='tt' title='Original form, is first standarized into SC and western digits and punctuation' id='topnumber'>#{@numb}</span></td></tr>"
     standardize
     @root_node.content= {"in"=>@numb, "out"=>nil, "m"=>nil}
 
     @numb= compute_number(@numb, @root_node)
-    @tabulous << "<tr><td>" + draw_tree(@root_node) + "</td></tr>"
+    @tabulous << "<tr><td class='summary'>" + draw_tree(@root_node) + "</td></tr>"
     
     @numb= englishify
-    @tabulous << "<tr><td><span class='tt' title='English form'>#{@numb}</span></td></tr></tbody></table>"    
+    @tabulous << "<tr><td id='bottom' class='summary'><span class='tt' title='English form'>#{@numb}</span></td></tr></tbody></table>"    
   end
   
   def standardize
