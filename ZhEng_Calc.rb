@@ -142,32 +142,35 @@ class ZhEng_Calc
             notes["out"] << "nothing to the left, we only calculate the right side"
             sol = BigDecimal.new(right)
           else
-            notes["out"] << "to disambiguate left & right become #{total_left.to_i}.#{right.to_i} and then we multiply by factor #{multi}"
-            notes["other"]="#{total_left.to_i} #{chi} #{right.to_i} => "
+            notes["out"] << "left & right become #{total_left.to_i}.#{right.to_i} and then we multiply by factor #{multi}"
+            notes["other"]="#{total_left.to_i} [#{chi}] #{right.to_i} => "
             sol= BigDecimal.new("#{total_left.to_i}.#{right.to_i}")*multi
           end
         else
           total_right = compute_number(right, child_right)
           if left=='0'
-            total_left = 0
+            temp, total_left = 0, 0
           else
+            
             total_left = compute_number(left, child_left)
             if total_left==0
+              temp = 1
               total_left= multi
             else
               notes["out"] << "the left part is multiplied by factor [#{total_left.to_f} x #{multi}]"
-              total_left= BigDecimal.new(total_left)*multi
+              temp = BigDecimal.new(total_left)
+              total_left= temp*multi
             end
           end
-          notes["other"]="[#{chi}] #{total_left.to_i} + #{total_right.to_i} => "
+          notes["other"]="[#{temp.to_f} #{chi}] + #{total_right.to_i} => "
           notes["out"] << ", left and right are added [#{total_left.to_f} + #{total_right.to_f}]"
           sol = total_left + total_right
         end
       elsif left!=""  # right is empty
         notes["out"] << "nothing to the right, we only calculate the left side and then multiply by factor #{multi}"
-        baseline= compute_number(left, child_left)
-        sol = baseline*multi
-        notes["other"]<<"[#{chi}] #{baseline.to_f} => "
+        temp= compute_number(left, child_left)
+        sol = temp.to_i*multi
+        notes["other"]<<"[#{temp.to_f} #{chi}] => "
       else
         notes["out"] << "nothing to the left, nor right, the solution is the factor #{multi}"
         sol = multi
