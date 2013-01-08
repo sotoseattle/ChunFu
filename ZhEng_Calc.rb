@@ -160,7 +160,7 @@ class ZhEng_Calc
             end
           end
           notes["other"]="[#{chi}] #{total_left.to_i} + #{total_right.to_i} => "
-          notes["out"] << "left and right are added [#{total_left.to_f} + #{total_right.to_f}]"
+          notes["out"] << ", left and right are added [#{total_left.to_f} + #{total_right.to_f}]"
           sol = total_left + total_right
         end
       elsif left!=""  # right is empty
