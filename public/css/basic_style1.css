@@ -112,14 +112,14 @@ height: 2px;
 
 .separate {
 /*border-top: 1px solid #7b2c31;*/
-border-top: 1px solid #BE0000;
+border-top: 1px solid #bb141a;
 }
 .join {
-border-top: 1px solid green;
+border-top: 1px solid #148ABB-;
 }
 .summary {
 border-top-style: double;
-border-top-color: grey; 
+border-top-color: #5a4a42; 
 }
 
 .single {

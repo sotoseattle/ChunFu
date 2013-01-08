@@ -169,7 +169,7 @@ class ZhEng_Calc
       elsif left!=""  # right is empty
         notes["out"] << "nothing to the right, we only calculate the left side and then multiply by factor #{multi}"
         temp= compute_number(left, child_left)
-        sol = temp.to_f*multi
+        sol = BigDecimal.new(temp.to_s)*multi
         notes["other"]<<"[#{temp.to_f} #{chi}] => "
       else
         notes["out"] << "nothing to the left, nor right, the solution is the factor #{multi}"
