@@ -30,11 +30,29 @@ class ZhEng_Calc
     @tabulous = {}
   end
   
+  #def htmlify(node, show_input=true)
+  #  key= show_input ? "in" : "out"
+  #  
+  #  nota= "class='tt' title='"+ node.content["n"]["#{key}"] +"'"
+  #  base = node.content["#{key}"].to_s
+  #  
+  #  chi= node.content["m"]
+  #  base= "<span #{nota}>"+(base=="" ? "-" : "<span>"+base+"</span>")+"</span>"
+  #  base.gsub!(chi, "</span><span class='vip'>#{chi}</span><span>") if (show_input and chi)
+  #  base
+  #end
   def htmlify(node, show_input=true)
     key= show_input ? "in" : "out"
     
     nota= "class='tt' title='"+ node.content["n"]["#{key}"] +"'"
-    base = node.content["#{key}"].to_s
+
+    #base = node.content["#{key}"].to_s
+    base= ""
+    if key=="out" and node.content["n"]["other"]!=""
+      base << node.content["n"]["other"].to_s
+    end
+    base << node.content["#{key}"].to_s
+    
     
     chi= node.content["m"]
     base= "<span #{nota}>"+(base=="" ? "-" : "<span>"+base+"</span>")+"</span>"
@@ -101,7 +119,7 @@ class ZhEng_Calc
   end
   
   def compute_number(str, node)
-    notes= {"in"=>"", "out"=> ""}   ## THE STANDARIZE TEXT SHOWS IN THE BOTTOM ROW!!!
+    notes= {"in"=>"", "out"=> "", "other"=>""}   ## THE STANDARIZE TEXT SHOWS IN THE BOTTOM ROW!!!
     left, right, multi, chi = break_by_highest_multiplier(str)
     
     child_left=  Tree::TreeNode.new("#{node.name}l", {"in"=>left, "out"=>nil, "m"=>nil, "n"=>notes})
@@ -125,6 +143,7 @@ class ZhEng_Calc
             sol = BigDecimal.new(right)
           else
             notes["out"] << "to disambiguate left & right become #{total_left.to_i}.#{right.to_i} and then we multiply by factor #{multi}"
+            notes["other"]="#{total_left.to_i} #{chi} #{right.to_i} => "
             sol= BigDecimal.new("#{total_left.to_i}.#{right.to_i}")*multi
           end
         else
@@ -140,6 +159,7 @@ class ZhEng_Calc
               total_left= BigDecimal.new(total_left)*multi
             end
           end
+          notes["other"]="[#{chi}] #{total_left.to_i} + #{total_right.to_i} => "
           notes["out"] << "left and right are added [#{total_left.to_f} + #{total_right.to_f}]"
           sol = total_left + total_right
         end
