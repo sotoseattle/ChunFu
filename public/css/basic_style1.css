@@ -115,7 +115,8 @@ height: 2px;
 border-top: 1px solid #bb141a;
 }
 .join {
-border-top: 1px solid #148ABB-;
+/*border-top: 1px solid #148ABB;*/
+border-top: 1px solid green;
 }
 .summary {
 border-top-style: double;
