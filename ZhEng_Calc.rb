@@ -81,7 +81,7 @@ class ZhEng_Calc
     @tabulous << "<tr><td class='summary'>" + draw_tree(@root_node) + "</td></tr>"
     
     @numb= englishify
-    @tabulous << "<tr><td id='bottom' class='summary'><span class='tt' title='English form'>#{@numb}</span></td></tr></tbody></table>"    
+    @tabulous << "<tr><td id='bottom' class='summary'><span class='tt' title='English form'>#{@numb}</span></td></tr></tbody></table>"  
   end
   
   def standardize
@@ -165,7 +165,9 @@ class ZhEng_Calc
         end
       elsif left!=""  # right is empty
         notes["out"] << "nothing to the right, we only calculate the left side and then multiply by factor #{multi}"
-        sol = compute_number(left, child_left)*multi
+        baseline= compute_number(left, child_left)
+        sol = baseline*multi
+        notes["other"]<<"[#{chi}] #{baseline.to_f} => "
       else
         notes["out"] << "nothing to the left, nor right, the solution is the factor #{multi}"
         sol = multi
