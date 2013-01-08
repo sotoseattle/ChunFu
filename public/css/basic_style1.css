@@ -13,10 +13,11 @@ padding: 5px;
 
 #expo {
 clear: both;
+min-height:600px;
 }
 
 #top {
-border-top: 2px solid black;
+/*border-top: 2px solid black;*/
 padding-left: 95px;
 padding-top: 30px;
 padding-bottom: 10px;
@@ -35,7 +36,7 @@ padding-right: 60px;
 }
 
 #bottom {
-border-bottom: 2px solid black;
+/*border-bottom: 2px solid black;*/
 }
 
 #head {
@@ -62,7 +63,8 @@ padding-left: 20px;
 padding-top: 38px;
 }
 span.vip {
-  background-color: #FAF70C;
+  /*background-color: #FAF70C;*/
+  background-color: #FFFFCC;
 }
 
 #tabulous > th,tr,td{
@@ -83,7 +85,12 @@ td.low{
 }
 
 #footer {
-padding-left: 35px;
+  position: bottom;
+  font-size: 80%;
+  padding-left: 35px;
+}
+#sources{
+  font-size: 80%;
 }
 
 #mysubmit {
@@ -117,6 +124,8 @@ border-top-color: grey;
 
 .single {
 padding-top: 4px;
+/*border-bottom-style: double;
+border-bottom-color: grey; */
 }
 
 a {
