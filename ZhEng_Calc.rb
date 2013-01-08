@@ -158,7 +158,7 @@ class ZhEng_Calc
               total_left= multi
             else
               notes["out"] << "the left part is multiplied by factor [#{total_left.to_f} x #{multi}]"
-              temp = BigDecimal.new(total_left)
+              temp = BigDecimal.new("#{total_left}")
               total_left= temp*multi
             end
           end
@@ -169,7 +169,7 @@ class ZhEng_Calc
       elsif left!=""  # right is empty
         notes["out"] << "nothing to the right, we only calculate the left side and then multiply by factor #{multi}"
         temp= compute_number(left, child_left)
-        sol = temp.to_i*multi
+        sol = temp.to_f*multi
         notes["other"]<<"[#{temp.to_f} #{chi}] => "
       else
         notes["out"] << "nothing to the left, nor right, the solution is the factor #{multi}"
