@@ -28,6 +28,9 @@ var formulaic = {
           defaultPosition: "top",
           delay: 100
         });
+		  },
+		  error: function(){
+		    $("#expo").html("<div id='warn'><p>Something went horribly wrong. Please post bellow the Chinese number that you tried so we can search for the \'bug\'.</p></div>");
 		  }
 		});
   },
