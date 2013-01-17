@@ -34,6 +34,10 @@ class ZhEng_Calc
     key= show_input ? "in" : "out"
     
     nota= if node.content["n"]["#{key}"]!=""
+      
+      #ap node.content
+      
+      
       "class='tt' title='"+ node.content["n"]["#{key}"] +"'"
     else
       ""
@@ -46,7 +50,15 @@ class ZhEng_Calc
     base << node.content["#{key}"].to_s
     
     chi= node.content["m"]
-    base= "<span #{nota}>"+(base=="" ? "NA" : "<span>"+base+"</span>")+"</span>"
+    #base= "<span #{nota}>"+(base=="" ? "NA" : "<span>"+base+"</span>")+"</span>"
+    if base==""
+      base= "NA"
+    elsif nota==""
+      base= "<span>"+base+"</span>"
+    else
+      base= "<span #{nota}><span>"+base+"</span></span>"
+    end
+    
     
     base.gsub!(chi, "</span><span class='vip'>#{chi}</span><span>") if (show_input and chi)
     base
@@ -70,12 +82,11 @@ class ZhEng_Calc
     @root_node.content= {"in"=>@numb, "out"=>nil, "m"=>nil}
 
     @numb= compute_number(@numb, @root_node)
+    
     @tabulous << "<tr><td class='summary'>" + draw_tree(@root_node) + "</td></tr>"
     
     @numb= englishify
-    @tabulous << "<tr><td id='bottom' class='summary'><span class='tt' title='English form'>#{@numb}</span></td></tr></tbody></table>"  
-    
-    puts @tabulous
+    @tabulous << "<tr><td id='bottom' class='summary'><span class='tt' title='English form'>#{@numb}</span></td></tr></tbody></table>"
   end
   
   def standardize
@@ -116,15 +127,16 @@ class ZhEng_Calc
     notes= {"in"=>"", "out"=> "", "other"=>""}   ## THE STANDARIZE TEXT SHOWS IN THE BOTTOM ROW!!!
     left, right, multi, chi = break_by_highest_multiplier(str)
     
-    child_left=  Tree::TreeNode.new("#{node.name}l", {"in"=>left, "out"=>nil, "m"=>nil, "n"=>notes})
-    child_right= Tree::TreeNode.new("#{node.name}r", {"in"=>right, "out"=>nil, "m"=>nil,"n"=>notes})
+    child_left=  Tree::TreeNode.new("#{node.name}l", {"in"=>left, "out"=>nil, "m"=>nil, "n"=>{"in"=>"", "out"=> "", "other"=>""}})
+    child_right= Tree::TreeNode.new("#{node.name}r", {"in"=>right, "out"=>nil, "m"=>nil,"n"=>{"in"=>"", "out"=> "", "other"=>""}})
+    
+    
     node << child_left if left
     node << child_right if right
     
     if chi
       notes["in"]<< "we break by the multiplier #{multi}"
     end
-    
     
     unless multi
       sol = str.numeric? ? BigDecimal.new(str) : nil
