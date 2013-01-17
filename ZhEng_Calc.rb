@@ -34,10 +34,6 @@ class ZhEng_Calc
     key= show_input ? "in" : "out"
     
     nota= if node.content["n"]["#{key}"]!=""
-      
-      #ap node.content
-      
-      
       "class='tt' title='"+ node.content["n"]["#{key}"] +"'"
     else
       ""
@@ -127,9 +123,10 @@ class ZhEng_Calc
     notes= {"in"=>"", "out"=> "", "other"=>""}   ## THE STANDARIZE TEXT SHOWS IN THE BOTTOM ROW!!!
     left, right, multi, chi = break_by_highest_multiplier(str)
     
-    child_left=  Tree::TreeNode.new("#{node.name}l", {"in"=>left, "out"=>nil, "m"=>nil, "n"=>{"in"=>"", "out"=> "", "other"=>""}})
-    child_right= Tree::TreeNode.new("#{node.name}r", {"in"=>right, "out"=>nil, "m"=>nil,"n"=>{"in"=>"", "out"=> "", "other"=>""}})
-    
+    child_left=  Tree::TreeNode.new("#{node.name}l", {"in"=>left, "out"=>nil, "m"=>nil, 
+      "n"=>{"in"=>"", "out"=> "", "other"=>""}})
+    child_right= Tree::TreeNode.new("#{node.name}r", {"in"=>right, "out"=>nil, "m"=>nil,
+      "n"=>{"in"=>"", "out"=> "", "other"=>""}})
     
     node << child_left if left
     node << child_right if right
@@ -142,7 +139,7 @@ class ZhEng_Calc
       sol = str.numeric? ? BigDecimal.new(str) : nil
     else
       if right!=""
-        if right.match(/^[1-9][0-9]*$/) && !left.match(/\./) # SPECIFIC CASE: Disambiguation of OOs
+        if right.match(/^[1-9][0-9]*$/) && !left.match(/\./) && (chi!="十") # SPECIFIC CASE: Disambiguation of OOs
           total_left = (left=='0' ? 0 : compute_number(left, child_left))
           if total_left==0
             notes["out"] << "nothing to the left, we only calculate the right side"
@@ -184,7 +181,6 @@ class ZhEng_Calc
     end
     node.content["out"]=sol.to_f.to_s
     node.content["m"]=chi if chi
-    
     node.content["n"]=notes
     return sol
   end
