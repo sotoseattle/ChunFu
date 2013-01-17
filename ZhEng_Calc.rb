@@ -74,6 +74,8 @@ class ZhEng_Calc
     
     @numb= englishify
     @tabulous << "<tr><td id='bottom' class='summary'><span class='tt' title='English form'>#{@numb}</span></td></tr></tbody></table>"  
+    
+    puts @tabulous
   end
   
   def standardize

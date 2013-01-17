@@ -25,4 +25,9 @@ class ChineseNumbers
     return pp
   end
   
+  
+  get '/example_long/?' do
+    erb :example_long
+  end
+  
 end
