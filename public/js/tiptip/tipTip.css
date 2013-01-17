@@ -25,6 +25,7 @@
 }
 
 #tiptip_content {
+  font-family:geneva; /*modified by fjs*/
 	/*font-size: 11px;*/
 	font-size: 12px;
 	color: #fff;

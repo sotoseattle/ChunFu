@@ -1,9 +1,13 @@
 body {
-/*width: 50%;*/
 margin-right: auto;
 margin-left: auto;
 margin-top: 1%;
-font-family: geneva;
+font-family: garamond, geneva;
+}
+
+table {
+/*background-color: #cc0000;*/
+padding: 1%;
 }
 
 /*  HEADER AND FOOTER  */
@@ -13,7 +17,8 @@ font-family: geneva;
   text-align:center;
   margin-left: auto ;
   margin-right: auto ;
-  margin-top:3%;
+  margin-top: 3.75%;
+  margin-bottom:3%;
 }
 
 #head {
@@ -26,15 +31,9 @@ padding-left: 3%;
 color:#792a2f;
 }
 
-#subhead {
-/*float: left;
-width: 20%;
-*/
-padding-left: 3%; 
-/*padding-right: 0px; */
-padding-right:3%;
-padding-top: 3.75%; 
-font-size: 1em;
+#chunfu{
+  color: #BE0000;
+  font-size: 1.4em;
 }
 
 #tabulary {
@@ -65,7 +64,8 @@ height: 2px;
 
 #footer {
   position: bottom;
-  font-size: 80%;
+  font-size: 90%;
+  padding-top: 3.75%;
   padding-left: 3%;
 }
 #sources{
@@ -73,13 +73,19 @@ height: 2px;
 }
 
 
+/*  INTRO  */
 
-
-
-table {
-/*background-color: #cc0000;*/
-padding: 1%;
+#intro{
+  margin-left: 15%;
+  margin-right: 15%;
+  margin-top: 30px;
+  margin-bottom: 30px;
 }
+
+
+
+/*  TABLE  */
+
 
 #expo {
 clear: both;
@@ -102,6 +108,7 @@ span.vip {
 
 #tabulous{
   margin: auto;
+  font-family: geneva;
 }
 #tabulous > th,tr,td{
     color: black;

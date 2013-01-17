@@ -34,7 +34,7 @@ var formulaic = {
         });
 		  },
 		  error: function(){
-		    $("#expo").html("<div id='warn'><p>Something went horribly wrong. Please post bellow the Chinese number that you tried so we can search for the \'bug\'.</p></div>");
+		    $("#expo").html("<div id='intro'>Something went horribly wrong. Please post bellow the Chinese number that you tried so we can search for the \'bug\'.</div>");
 		  }
 		});
   },
@@ -47,7 +47,7 @@ var formulaic = {
 		    formulaic.callServer(chinumber)
 		  } else {
 		    console.log("WRONG INPUT");
-		    $("#expo").html("<div id='warn'><p>I am sorry, the input string \'"+chinumber+"\' is not recognized. Only the following characters are valid:</p><p>"+allowed.toString()+"</p></div>");
+		    $("#expo").html("<div id='intro'><p>I am sorry, the input string \'"+chinumber+"\' is not recognized. Only the following characters are valid:</p><p>"+allowed.toString()+"</p></div>");
 		  }
 		  
 		  
