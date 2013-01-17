@@ -6,36 +6,25 @@
 		
 		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 		
-		<link href="css/basic_style1.css" rel="stylesheet" type="text/css"/>
+		<link href="css/style.css" rel="stylesheet" type="text/css"/>
 		<script type="text/javascript" src="js/numbersinapp.js"></script>
 		
 		<link type="text/css" rel="stylesheet" href="js/tiptip/tipTip.css" />
 		<script type="text/javascript" src="js/tiptip/jquery.tipTip.minified.js"></script>
-		
 	</head>
 		
 	<body>
+		<div id="horizontal-grid-overlay"></div>
 		<div>
-			<div id="header">
-				
-					<span id='head' onclick="window.location.href='/';">
-						<font style="color:#BE0000;">Chun Fu</font>
-					</span>
-					<span id='subhead'>Chinese Numbers Kung Fu</span>
-					<table id="tabulary" >
-						<thead>
-								<tr>
-									<th>
-										<input id="sourcestring" name="sourcestring" value="" action="alert('hila')"/>
-									</th>
-									<th>
-										<input type="submit" id="mysubmit" value="Convert" />
-									</th>
-								</tr>
-
-						</thead>
-						<tbody/>
-					</table>
+			<div id="banner">
+				<span id='head' onclick="window.location.href='/';">
+					<font style="color:#BE0000;">Chun Fu</font>
+				</span>
+				<span id='subhead'>Chinese Numbers Kung Fu</span>
+				<div id="tabulary">
+					<input id="sourcestring" name="sourcestring" value="" action="alert('hila')"/>
+					<input type="submit" id="mysubmit" value="Convert" />
+				</div>
 			</div>
 			
         	

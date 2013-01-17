@@ -30,32 +30,24 @@ class ZhEng_Calc
     @tabulous = {}
   end
   
-  #def htmlify(node, show_input=true)
-  #  key= show_input ? "in" : "out"
-  #  
-  #  nota= "class='tt' title='"+ node.content["n"]["#{key}"] +"'"
-  #  base = node.content["#{key}"].to_s
-  #  
-  #  chi= node.content["m"]
-  #  base= "<span #{nota}>"+(base=="" ? "-" : "<span>"+base+"</span>")+"</span>"
-  #  base.gsub!(chi, "</span><span class='vip'>#{chi}</span><span>") if (show_input and chi)
-  #  base
-  #end
   def htmlify(node, show_input=true)
     key= show_input ? "in" : "out"
     
-    nota= "class='tt' title='"+ node.content["n"]["#{key}"] +"'"
-
-    #base = node.content["#{key}"].to_s
+    nota= if node.content["n"]["#{key}"]!=""
+      "class='tt' title='"+ node.content["n"]["#{key}"] +"'"
+    else
+      ""
+    end
+    
     base= ""
     if key=="out" and node.content["n"]["other"]!=""
       base << node.content["n"]["other"].to_s
     end
     base << node.content["#{key}"].to_s
     
-    
     chi= node.content["m"]
-    base= "<span #{nota}>"+(base=="" ? "-" : "<span>"+base+"</span>")+"</span>"
+    base= "<span #{nota}>"+(base=="" ? "NA" : "<span>"+base+"</span>")+"</span>"
+    
     base.gsub!(chi, "</span><span class='vip'>#{chi}</span><span>") if (show_input and chi)
     base
   end

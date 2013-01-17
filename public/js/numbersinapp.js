@@ -16,6 +16,10 @@ var formulaic = {
 		  type: "get",
 		  data: {sourcestring: chinumber},
 		  success: function(data){
+		    // turn on-off the grid to check alignment
+		    //$("#horizontal-grid-overlay").css("display", "block");
+		    
+		    
 		    $("input#sourcestring").val("");
 		    $("#expo").html("");
 		    

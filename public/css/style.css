@@ -1,0 +1,166 @@
+body {
+/*width: 50%;*/
+margin-right: auto;
+margin-left: auto;
+margin-top: 1%;
+font-family: geneva;
+}
+
+/*  HEADER AND FOOTER  */
+
+#banner{
+  width: 95%;
+  text-align:center;
+  margin-left: auto ;
+  margin-right: auto ;
+  margin-top:3%;
+}
+
+#head {
+/*float: left;
+width: 9%;
+*/
+padding-right: 0; 
+padding-top: 3.75%; 
+padding-left: 3%; 
+color:#792a2f;
+}
+
+#subhead {
+/*float: left;
+width: 20%;
+*/
+padding-left: 3%; 
+/*padding-right: 0px; */
+padding-right:3%;
+padding-top: 3.75%; 
+font-size: 1em;
+}
+
+#tabulary {
+/*float: right;*/
+display: inline;
+width: 20%;
+padding-left: 1%;
+/*padding-top: 3.5%;*/
+}
+
+#mysubmit {
+box-shadow: 3px 3px 2px #63544f;
+}
+
+#sourcestring {
+border-radius: 3px 3px 3px 3px;
+box-shadow: 1px 1px 1px #0D0D0D;
+margin-bottom: 1%; 
+}
+
+hr {
+margin-right: auto;
+margin-left: auto;
+border: none; 
+background-color: #0F153D; 
+height: 2px;
+}
+
+#footer {
+  position: bottom;
+  font-size: 80%;
+  padding-left: 3%;
+}
+#sources{
+  font-size: 80%;
+}
+
+
+
+
+
+table {
+/*background-color: #cc0000;*/
+padding: 1%;
+}
+
+#expo {
+clear: both;
+}
+
+#top {
+/*border-top: 2px solid black;*/
+padding-left: 10%;
+padding-top: 2%;
+padding-bottom: 0;
+}
+
+#topnumber {
+padding-right: 6%;
+}
+
+span.vip {
+  background-color: #FF9;
+}
+
+#tabulous{
+  margin: auto;
+}
+#tabulous > th,tr,td{
+    color: black;
+    margin: 1% 10%;
+    padding: 10px 20px;
+    text-align: center;
+    vertical-align: top;
+    white-space: nowrap;
+}
+
+.together {
+border-collapse: collapse; /*this doesnt seem to be necessary ???*/
+}
+
+td.low{
+  vertical-align: bottom;
+}
+
+a {
+color: #bc3539;
+}
+
+a:hover {
+color: #7b2c31;
+}
+
+#toprow {
+padding-left: 100;
+}
+
+.separate {
+border-top: 1px solid #BE0000;
+}
+
+.join {
+border-top: 1px solid green;
+}
+
+.summary {
+border-top-style: double;
+border-top-color: grey; 
+}
+
+/* UNUSED CLASSES */
+/*
+#bottom {
+border-bottom: 2px solid black;
+}
+.single {
+}
+
+*/
+#horizontal-grid-overlay {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	background: url(../images/grid-horz.png);
+	display: none;
+	padding: 10px;
+}
