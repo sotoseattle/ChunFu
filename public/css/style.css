@@ -1,14 +1,13 @@
 body {
+  /*
 margin-right: auto;
 margin-left: auto;
+*/
 margin-top: 1%;
 font-family: garamond, geneva;
 }
 
-table {
-/*background-color: #cc0000;*/
-padding: 1%;
-}
+
 
 /*  HEADER AND FOOTER  */
 
@@ -17,7 +16,7 @@ padding: 1%;
   text-align:center;
   margin-left: auto ;
   margin-right: auto ;
-  margin-top: 3.75%;
+  margin-top: 3%;
   margin-bottom:3%;
 }
 
@@ -86,9 +85,30 @@ height: 2px;
 
 /*  TABLE  */
 
-
 #expo {
 clear: both;
+}
+
+#tabulous{
+  margin: auto;
+  font-family: geneva;
+}
+#tabulous > th,tr,td{
+    color: black;
+    /*margin: 1% 10%;*/
+    /*padding: 10px 20px;*/
+    padding-top:4px;
+    padding-bottom:4px;
+    text-align: center;
+    vertical-align: top;
+    white-space: nowrap;
+}
+#tabulous td{
+ padding-left:10px;
+ padding-right:10px;
+}
+#tabulous td table{
+ padding: 1% 10%;
 }
 
 #top {
@@ -99,24 +119,11 @@ padding-bottom: 0;
 }
 
 #topnumber {
-padding-right: 6%;
+/*padding-right: 6%;*/
 }
 
 span.vip {
   background-color: #FF9;
-}
-
-#tabulous{
-  margin: auto;
-  font-family: geneva;
-}
-#tabulous > th,tr,td{
-    color: black;
-    margin: 1% 10%;
-    padding: 10px 20px;
-    text-align: center;
-    vertical-align: top;
-    white-space: nowrap;
 }
 
 .together {
@@ -135,10 +142,6 @@ a:hover {
 color: #7b2c31;
 }
 
-#toprow {
-padding-left: 100;
-}
-
 .separate {
 border-top: 1px solid #BE0000;
 }
@@ -154,10 +157,19 @@ border-top-color: grey;
 
 /* UNUSED CLASSES */
 /*
+table {
+background-color: #cc0000;
+padding: 1%;
+}
+
+.single {
+}
+
 #bottom {
 border-bottom: 2px solid black;
 }
-.single {
+#toprow {
+padding-left: 100;
 }
 
 */
