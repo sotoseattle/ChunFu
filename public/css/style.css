@@ -1,8 +1,8 @@
 body {
-  /*
+width: 800px;
 margin-right: auto;
 margin-left: auto;
-*/
+
 margin-top: 1%;
 font-family: garamond, geneva;
 }
@@ -12,7 +12,7 @@ font-family: garamond, geneva;
 /*  HEADER AND FOOTER  */
 
 #banner{
-  width: 95%;
+  width: auto;
   text-align:center;
   margin-left: auto ;
   margin-right: auto ;
