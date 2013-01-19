@@ -22,6 +22,7 @@ class ChineseNumbers
     an.translate
     sol= an.tabulous
     pp= {"query"=>query, "sol"=>an.tabulous}.to_json
+    response['Access-Control-Allow-Origin'] = '*'
     return pp
   end
   
