@@ -1,1 +1,1 @@
-web: bundle exec ruby ChineseNumbers.rb -p $PORT
+web: bundle exec ruby IdeoWebServer.rb -p $PORT

@@ -1,0 +1,1 @@
+web: bundle exec ruby IdeoWebServer.rb -p $PORT
