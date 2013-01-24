@@ -59,8 +59,8 @@ class IdeoWebServer
   end
   
   get '/cometopapa/?' do
-    response['Access-Control-Allow-Origin'] = '*'
     pp= JSON.generate(Pair.retrieve_pairs_by_chinese(params["term"], params["lang"]))
+    response['Access-Control-Allow-Origin'] = '*'
     return pp
   end
   

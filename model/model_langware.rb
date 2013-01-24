@@ -71,22 +71,22 @@ class Pair < ActiveRecord::Base
 #  #            USE STANDARIZE FOR THE NORMAL QUERY TO DB TOO                #
 #  
 #  ###########################################################################
-#  def self.standarize_sources(arr) 
-#    sources, other= [], 0
-#    arr.each do |s1|
-#      if %w[x xe xmt g c u w].include?(s1) # CHECK WHICH ONES EXIST!!!
-#        sources << s1
-#      else
-#        other +=1
-#      end
-#    end
-#    sources = sources.sort.join()
-#    if other>0
-#      sources << "+" if sources != ""
-#      sources << "#{other}"
-#    end
-#    return sources
-#  end
+  def self.standarize_sources(arr) 
+    sources, other= [], 0
+    arr.each do |s1|
+      if %w[x xe xmt g c u w].include?(s1) # CHECK WHICH ONES EXIST!!!
+        sources << s1
+      else
+        other +=1
+      end
+    end
+    sources = sources.sort.join()
+    if other>0
+      sources << "+" if sources != ""
+      sources << "#{other}"
+    end
+    return sources
+  end
 #  ###########################################################################
 #  
 #  #            USE STANDARIZE FOR THE NORMAL QUERY TO DB TOO                #
@@ -349,50 +349,28 @@ class Pair < ActiveRecord::Base
 #  end
 #  
   # ACCES GLOSSARY ALONE (based on Termlink) #
-  MAX_HITS = 3
-  
-  def self.longest_chi(chistring, source_lan)
-    hits, sol = 0, []
-    line_arr = chistring.scan(/./)
-    while (line_arr.size>0 && hits<MAX_HITS) 
-      unless line_arr.size==1 && hits!=0  # special case: only show unigram if nothing else available
-        if source_lan=="ct"
-            if c = Chinese.find_by_term(line_arr.join)
-              hits += 1
-              sol << c
-            end
-        elsif source_lan == "ch" 
-            if c = Chinese.find(:first, :conditions => {:simplified => line_arr.join})
-              hits += 1
-              sol << c
-            end
-        end
-      end
-      line_arr.pop
-    end
-    sol.uniq
-  end
-  
   def self.retrieve_pairs_by_chinese(chistring, source_lan)
     sol = {}
-    chineses = longest_chi(chistring, source_lan)
-    chineses.each do |c|
+    c = if source_lan=="ct"
+      Chinese.find_by_term(chistring)
+    elsif source_lan == "ch" 
+      Chinese.find(:first, :conditions => {:simplified => chistring})
+    end
+
+    if c
       pairs = []
       c.pairs.all(:order=> "rank").each do |p|  
-      #c.pairs.all(:conditions => {:status => ["c", "v"]}, :order=> "rank").each do |p|  
-      #c.pairs.each do |p|
         pairs<< {
           :engt => p.english.term,
-          #:sts => color_status(p.status), 
           :sts => ((p.status=="r" || p.status=="q" || p.status=="g") ? "rq" : p.status),
-          #:src => rank_by_source(p.source)}
           :src => standarize_sources(p.source)}
       end
       key = source_lan=="ct" ? c.term : c.simplified
-      #sol[key] = sort_by_goodness(pairs) # NOT NEEDED, already ranked by rank
       sol[key] = pairs
+    else
+      sol= {chistring=> [{:engt => "no results found", :sts => "xx"}]}
     end
-    sol.empty? ? {chistring=> [{:engt => "no results found", :sts => "xx"}]} : sol
+    return sol
   end
   
 end
