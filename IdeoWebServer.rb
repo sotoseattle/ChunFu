@@ -58,6 +58,12 @@ class IdeoWebServer
     return pp
   end
   
+  get '/cometopapa/?' do
+    response['Access-Control-Allow-Origin'] = '*'
+    pp= JSON.generate(Pair.retrieve_pairs_by_chinese(params["term"], params["lang"]))
+    return pp
+  end
+  
   get '/fuzzy/?' do
     response['Access-Control-Allow-Origin'] = '*'
     pp= JSON.generate(Chinese.fuzzysearch(params["term"]))

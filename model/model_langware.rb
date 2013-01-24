@@ -63,291 +63,291 @@ class Pair < ActiveRecord::Base
 	belongs_to :chinese
 	belongs_to :english
 	
-	RANKING={"x" => 100, "g" => 20, "c" => 10, "u" => 5}
-  LIMIT_RECS = 500
-  
-  ###########################################################################
-  
-  #            USE STANDARIZE FOR THE NORMAL QUERY TO DB TOO                #
-  
-  ###########################################################################
-  def self.standarize_sources(arr) 
-    sources, other= [], 0
-    arr.each do |s1|
-      if %w[x xe xmt g c u w].include?(s1) # CHECK WHICH ONES EXIST!!!
-        sources << s1
-      else
-        other +=1
-      end
-    end
-    sources = sources.sort.join()
-    if other>0
-      sources << "+" if sources != ""
-      sources << "#{other}"
-    end
-    return sources
-  end
-  ###########################################################################
-  
-  #            USE STANDARIZE FOR THE NORMAL QUERY TO DB TOO                #
-  
-  ###########################################################################
-	
-	def self.chain_condis(hash)
-    chain, params = [], {}
-    hash.each do |k,v|
-      case k
-        when :chinese_id
-          chain << "chinese_id = :cid"
-          params[:cid]=v
-        when :english_id
-          chain << "english_id = :eid"
-          params[:eid]=v
-        when :status
-          chain << "status IN (:sts)"
-          params[:sts]=v
-        when :sources
-          chain << "source && :src"
-          params[:src]=v.pg
-        when :updated_at
-          chain << "updated_at >= :tmsp"
-          params[:tmsp]=v
-      end
-    end
-    [chain.join(" AND "), params]
-  end
-  
-  def self.get_pairs(args)
-    if args[:chinese_id]==-1 # chinese string filled in but not in db
-        []
-    else
-      a,b= chain_condis(args)
-      #puts a; ap b
-      Pair.where(a, b, :order=>'updated_at DESC').limit(LIMIT_RECS)
-    end
-  end
-  
-  def self.organize_pairs(pall)
-    pairs = []
-    if pall
-      pall.each do |p|
-        pairs<< {
-          :chid => p[:chinese_id],
-          :chit => p.chinese.term,
-          :eid  => p[:english_id], 
-          :engt => p.english.term,
-          :sts  => p.status, 
-          :src  => p[:source].sort.reverse.join(", "),
-          #:rkg  => p[:source].inject(0){|tot, s| tot += (RANKING[s] ? RANKING[s] : 1)}
-          :gfreq=> p.english.gfreq
-        }
-      end
-    end
-    return pairs
-  end
-	
-	def self.retrieve(conditions)
-	  pairs = []
-    if !conditions[:english_id] and conditions[:english_term]
-      eng = conditions.delete(:english_term)
-      if eng.match(/^%|%$/)
-        stop = false
-        max = (English.where("term LIKE ?", eng).count/LIMIT_RECS).floor+1
-        (0...max).each do |i|
-          break if stop
-          eall = English.where("term LIKE :et", {:et => eng}).limit(LIMIT_RECS).offset(LIMIT_RECS*i)
-          eall.each do |e|
-            if pairs.size >= LIMIT_RECS
-              stop = true
-              break
-            else
-              conditions[:english_id] = e.id
-              pairs += organize_pairs(get_pairs(conditions))
-            end
-          end
-        end
-        return pairs
-      else
-        if e = English.find_by_term(eng)
-          conditions[:english_id] = e.id 
-        end
-      end
-    end
-    if !conditions[:chinese_id] and conditions[:chinese_term]
-      chi = conditions.delete(:chinese_term)
-      if chi.match(/^%|%$/)
-        stop = false
-        max = (Chinese.where("term LIKE ?", chi).count/LIMIT_RECS).floor+1
-        (0...max).each do |i|
-          break if stop
-          call = Chinese.where("term LIKE :ct", {:ct => chi}).limit(LIMIT_RECS).offset(LIMIT_RECS*i)
-          call.each do |c|
-            if pairs.size >= LIMIT_RECS
-              stop = true
-              break
-            else
-              conditions[:chinese_id] = c.id
-              pairs += organize_pairs(get_pairs(conditions))
-            end
-          end
-        end
-        return pairs
-      else
-        conditions[:chinese_id] = (c=Chinese.find_by_term(chi)) ? c.id : -1
-      end
-    end
-
-    pairs += organize_pairs(get_pairs(conditions))
-    pairs
-  end
-  
-  def self.reorder(params, new_list)
-    i=0
-    new_list.each do |e|
-      if e= English.find_by_term(e)
-        params[:english_id]=e.id
-        if p=Pair.first(:conditions=>params)
-          i+=1
-          puts "#{e.term} => rank #{p.rank} becomes #{i}"
-          p.rank = i
-          unless p.save
-            raise "could not update pair with new rank"
-            return 500
-          end
-        else
-          raise "#{e} pair not found"
-          status 404
-        end
-      else
-        raise "#{e} english not found"
-        status 404
-      end
-    end
-    return 200
-  end
-  
-  def self.kill(params)
-    if p= Pair.first(:conditions=>params)
-      Trash.where(:cterm => p.chinese.term, :eterm => p.english.term).first_or_create
-      p.delete
-      return 200
-    else
-      raise "Pair not found"
-      return 404
-    end
-  end
-  
-  def self.verify(params)
-    if p= Pair.first(:conditions=>params)
-      p.status = 'v'
-      if p.save
-        return 200
-      else
-        raise "could not update pair with new status"
-        return 500
-      end
-    end
-    raise "Pair not found"
-    return 404
-  end
-  
-  def self.edit_english(params)
-    chinese = Chinese.find(params[:chinese_id])
-    old_eng = English.find(params[:english_id])
-    old_pair = Pair.first(:conditions=>{:chinese_id=>chinese.id, :english_id=>old_eng.id})
-    new_eng = English.where(:term => params[:new_eng]).first
-
-    if new_eng==nil # new english term does not exist in English Table
-      Trash.where(:cterm => chinese.term, :eterm => old_eng.term).first_or_create
-      if Pair.where(:english_id => old_eng.id).count!=1
-        puts "#{params[:new_eng]} doesnt exist, n pairs => creating new one and rewiring..."
-        new_eng = English.create(:term => params[:new_eng])
-        Pair.create(:chinese_id=> chinese.id, :english_id=> new_eng.id, 
-                    :status=> "v", :source=> ["xe"], :rank=> old_pair.rank)
-        old_pair.destroy
-      else
-        puts "#{params[:new_eng]} does not exist, 1 pair => updating directly..."
-        old_eng.term= params[:new_eng]
-        old_eng.save
-        old_pair.status = "v"
-        old_pair.source << "xe" unless old_pair.source.include?("xe")
-        old_pair.save
-      end
-    else
-      if new_eng.id==old_eng.id
-        puts "same as before, dont do anything"
-        return 304
-      else
-        puts "#{params[:new_eng]} already exist, rewiring pair..."
-        Trash.where(:cterm => chinese.term, :eterm => old_eng.term).first_or_create
-        old_pair.destroy
-        
-        if new_pair = Pair.first(:conditions=>{:chinese_id=>chinese.id, :english_id=>new_eng.id})
-          puts "... and since the new pairing already exists, no need to do anything"
-        else
-          Pair.create(:chinese_id=> chinese.id, :english_id=> new_eng.id, 
-                      :status=> "v", :source=> ["xe"], :rank=> old_pair.rank)
-          puts "... and created new pairing with v and xe"
-        end
-      end
-    end
-    return 200
-  end
-  
-  def self.add(params)
-    begin
-      c = Chinese.find_or_create_by_term(params["chinese_term"])
-      e = English.find_or_create_by_term(params["english_term"])
-      
-      conditions= {:chinese_id=>c.id, :status=>['v','c']}
-      new_list= Pair.all(:conditions=>conditions, :order=>:rank).map{|p2| p2.english.term}
-      
-      if p=Pair.where(:chinese_id=> c.id, :english_id=> e.id).first
-        p.status= "v"
-        p.source << params["source"] unless p.source.include?(params["source"])
-        p.save
-        return 200
-      else
-        Pair.create(:chinese_id=> c.id, :english_id=> e.id, :status=>'v', 
-          :source=> [params["source"]].pg, :rank=> 1)
-        new_list.unshift(params["english_term"])
-        return Pair.reorder(conditions, new_list)
-      end
-    rescue
-      raise "Unable to Add Pair to DB"
-      return 500
-    end
-  end
-  
-  def self.queryDB(terms)
-    gloss = {}
-    terms.compact.uniq.each do |t|
-      if c = Chinese.find_by_term(t)
-        c.pairs.all(:conditions => {:status => ["c", "v"]}, :order=> "rank").each do |p|  
-          sources = []
-          other = 0
-          p.source.each do |s1|
-            if %w[x xe xmt g c u w].include?(s1)
-              sources << s1
-            else
-              other +=1
-            end
-          end
-          sources = sources.sort.join()
-          if other>0
-            sources << "+" if sources != ""
-            sources << "#{other}"
-          end
-          
-          element = [p.english[:term], sources, p.status=="v"]
-          gloss[t] ? (gloss[t] << element) : (gloss[t] = [element])
-        end
-      end
-    end
-    
-    return gloss
-  end
-  
+#	RANKING={"x" => 100, "g" => 20, "c" => 10, "u" => 5}
+#  LIMIT_RECS = 500
+#  
+#  ###########################################################################
+#  
+#  #            USE STANDARIZE FOR THE NORMAL QUERY TO DB TOO                #
+#  
+#  ###########################################################################
+#  def self.standarize_sources(arr) 
+#    sources, other= [], 0
+#    arr.each do |s1|
+#      if %w[x xe xmt g c u w].include?(s1) # CHECK WHICH ONES EXIST!!!
+#        sources << s1
+#      else
+#        other +=1
+#      end
+#    end
+#    sources = sources.sort.join()
+#    if other>0
+#      sources << "+" if sources != ""
+#      sources << "#{other}"
+#    end
+#    return sources
+#  end
+#  ###########################################################################
+#  
+#  #            USE STANDARIZE FOR THE NORMAL QUERY TO DB TOO                #
+#  
+#  ###########################################################################
+#	
+#	def self.chain_condis(hash)
+#    chain, params = [], {}
+#    hash.each do |k,v|
+#      case k
+#        when :chinese_id
+#          chain << "chinese_id = :cid"
+#          params[:cid]=v
+#        when :english_id
+#          chain << "english_id = :eid"
+#          params[:eid]=v
+#        when :status
+#          chain << "status IN (:sts)"
+#          params[:sts]=v
+#        when :sources
+#          chain << "source && :src"
+#          params[:src]=v.pg
+#        when :updated_at
+#          chain << "updated_at >= :tmsp"
+#          params[:tmsp]=v
+#      end
+#    end
+#    [chain.join(" AND "), params]
+#  end
+#  
+#  def self.get_pairs(args)
+#    if args[:chinese_id]==-1 # chinese string filled in but not in db
+#        []
+#    else
+#      a,b= chain_condis(args)
+#      #puts a; ap b
+#      Pair.where(a, b, :order=>'updated_at DESC').limit(LIMIT_RECS)
+#    end
+#  end
+#  
+#  def self.organize_pairs(pall)
+#    pairs = []
+#    if pall
+#      pall.each do |p|
+#        pairs<< {
+#          :chid => p[:chinese_id],
+#          :chit => p.chinese.term,
+#          :eid  => p[:english_id], 
+#          :engt => p.english.term,
+#          :sts  => p.status, 
+#          :src  => p[:source].sort.reverse.join(", "),
+#          #:rkg  => p[:source].inject(0){|tot, s| tot += (RANKING[s] ? RANKING[s] : 1)}
+#          :gfreq=> p.english.gfreq
+#        }
+#      end
+#    end
+#    return pairs
+#  end
+#	
+#	def self.retrieve(conditions)
+#	  pairs = []
+#    if !conditions[:english_id] and conditions[:english_term]
+#      eng = conditions.delete(:english_term)
+#      if eng.match(/^%|%$/)
+#        stop = false
+#        max = (English.where("term LIKE ?", eng).count/LIMIT_RECS).floor+1
+#        (0...max).each do |i|
+#          break if stop
+#          eall = English.where("term LIKE :et", {:et => eng}).limit(LIMIT_RECS).offset(LIMIT_RECS*i)
+#          eall.each do |e|
+#            if pairs.size >= LIMIT_RECS
+#              stop = true
+#              break
+#            else
+#              conditions[:english_id] = e.id
+#              pairs += organize_pairs(get_pairs(conditions))
+#            end
+#          end
+#        end
+#        return pairs
+#      else
+#        if e = English.find_by_term(eng)
+#          conditions[:english_id] = e.id 
+#        end
+#      end
+#    end
+#    if !conditions[:chinese_id] and conditions[:chinese_term]
+#      chi = conditions.delete(:chinese_term)
+#      if chi.match(/^%|%$/)
+#        stop = false
+#        max = (Chinese.where("term LIKE ?", chi).count/LIMIT_RECS).floor+1
+#        (0...max).each do |i|
+#          break if stop
+#          call = Chinese.where("term LIKE :ct", {:ct => chi}).limit(LIMIT_RECS).offset(LIMIT_RECS*i)
+#          call.each do |c|
+#            if pairs.size >= LIMIT_RECS
+#              stop = true
+#              break
+#            else
+#              conditions[:chinese_id] = c.id
+#              pairs += organize_pairs(get_pairs(conditions))
+#            end
+#          end
+#        end
+#        return pairs
+#      else
+#        conditions[:chinese_id] = (c=Chinese.find_by_term(chi)) ? c.id : -1
+#      end
+#    end
+#
+#    pairs += organize_pairs(get_pairs(conditions))
+#    pairs
+#  end
+#  
+#  def self.reorder(params, new_list)
+#    i=0
+#    new_list.each do |e|
+#      if e= English.find_by_term(e)
+#        params[:english_id]=e.id
+#        if p=Pair.first(:conditions=>params)
+#          i+=1
+#          puts "#{e.term} => rank #{p.rank} becomes #{i}"
+#          p.rank = i
+#          unless p.save
+#            raise "could not update pair with new rank"
+#            return 500
+#          end
+#        else
+#          raise "#{e} pair not found"
+#          status 404
+#        end
+#      else
+#        raise "#{e} english not found"
+#        status 404
+#      end
+#    end
+#    return 200
+#  end
+#  
+#  def self.kill(params)
+#    if p= Pair.first(:conditions=>params)
+#      Trash.where(:cterm => p.chinese.term, :eterm => p.english.term).first_or_create
+#      p.delete
+#      return 200
+#    else
+#      raise "Pair not found"
+#      return 404
+#    end
+#  end
+#  
+#  def self.verify(params)
+#    if p= Pair.first(:conditions=>params)
+#      p.status = 'v'
+#      if p.save
+#        return 200
+#      else
+#        raise "could not update pair with new status"
+#        return 500
+#      end
+#    end
+#    raise "Pair not found"
+#    return 404
+#  end
+#  
+#  def self.edit_english(params)
+#    chinese = Chinese.find(params[:chinese_id])
+#    old_eng = English.find(params[:english_id])
+#    old_pair = Pair.first(:conditions=>{:chinese_id=>chinese.id, :english_id=>old_eng.id})
+#    new_eng = English.where(:term => params[:new_eng]).first
+#
+#    if new_eng==nil # new english term does not exist in English Table
+#      Trash.where(:cterm => chinese.term, :eterm => old_eng.term).first_or_create
+#      if Pair.where(:english_id => old_eng.id).count!=1
+#        puts "#{params[:new_eng]} doesnt exist, n pairs => creating new one and rewiring..."
+#        new_eng = English.create(:term => params[:new_eng])
+#        Pair.create(:chinese_id=> chinese.id, :english_id=> new_eng.id, 
+#                    :status=> "v", :source=> ["xe"], :rank=> old_pair.rank)
+#        old_pair.destroy
+#      else
+#        puts "#{params[:new_eng]} does not exist, 1 pair => updating directly..."
+#        old_eng.term= params[:new_eng]
+#        old_eng.save
+#        old_pair.status = "v"
+#        old_pair.source << "xe" unless old_pair.source.include?("xe")
+#        old_pair.save
+#      end
+#    else
+#      if new_eng.id==old_eng.id
+#        puts "same as before, dont do anything"
+#        return 304
+#      else
+#        puts "#{params[:new_eng]} already exist, rewiring pair..."
+#        Trash.where(:cterm => chinese.term, :eterm => old_eng.term).first_or_create
+#        old_pair.destroy
+#        
+#        if new_pair = Pair.first(:conditions=>{:chinese_id=>chinese.id, :english_id=>new_eng.id})
+#          puts "... and since the new pairing already exists, no need to do anything"
+#        else
+#          Pair.create(:chinese_id=> chinese.id, :english_id=> new_eng.id, 
+#                      :status=> "v", :source=> ["xe"], :rank=> old_pair.rank)
+#          puts "... and created new pairing with v and xe"
+#        end
+#      end
+#    end
+#    return 200
+#  end
+#  
+#  def self.add(params)
+#    begin
+#      c = Chinese.find_or_create_by_term(params["chinese_term"])
+#      e = English.find_or_create_by_term(params["english_term"])
+#      
+#      conditions= {:chinese_id=>c.id, :status=>['v','c']}
+#      new_list= Pair.all(:conditions=>conditions, :order=>:rank).map{|p2| p2.english.term}
+#      
+#      if p=Pair.where(:chinese_id=> c.id, :english_id=> e.id).first
+#        p.status= "v"
+#        p.source << params["source"] unless p.source.include?(params["source"])
+#        p.save
+#        return 200
+#      else
+#        Pair.create(:chinese_id=> c.id, :english_id=> e.id, :status=>'v', 
+#          :source=> [params["source"]].pg, :rank=> 1)
+#        new_list.unshift(params["english_term"])
+#        return Pair.reorder(conditions, new_list)
+#      end
+#    rescue
+#      raise "Unable to Add Pair to DB"
+#      return 500
+#    end
+#  end
+#  
+#  def self.queryDB(terms)
+#    gloss = {}
+#    terms.compact.uniq.each do |t|
+#      if c = Chinese.find_by_term(t)
+#        c.pairs.all(:conditions => {:status => ["c", "v"]}, :order=> "rank").each do |p|  
+#          sources = []
+#          other = 0
+#          p.source.each do |s1|
+#            if %w[x xe xmt g c u w].include?(s1)
+#              sources << s1
+#            else
+#              other +=1
+#            end
+#          end
+#          sources = sources.sort.join()
+#          if other>0
+#            sources << "+" if sources != ""
+#            sources << "#{other}"
+#          end
+#          
+#          element = [p.english[:term], sources, p.status=="v"]
+#          gloss[t] ? (gloss[t] << element) : (gloss[t] = [element])
+#        end
+#      end
+#    end
+#    
+#    return gloss
+#  end
+#  
   # ACCES GLOSSARY ALONE (based on Termlink) #
   MAX_HITS = 3
   
