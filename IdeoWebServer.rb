@@ -70,6 +70,10 @@ class IdeoWebServer
     return pp
   end
   
-  
+  get '/deconstruct/?' do
+    pp= JSON.generate(Pair.deconstruct_chinese(params["term"]))
+    response['Access-Control-Allow-Origin'] = '*'
+    return pp
+  end
   
 end

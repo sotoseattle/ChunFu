@@ -373,6 +373,41 @@ class Pair < ActiveRecord::Base
     return sol
   end
   
+  
+  def self.deconstruct_chinese(chistring)
+    chistarr= chistring.split("")
+    len= chistring.size
+    
+    sol= {}
+    (0..(len-1)).each do |i|
+      (0..i).each do |n|
+        ngram_size= len-i
+        if c= Chinese.find_by_term(chistarr[n,ngram_size].join)
+          pairs = []
+          c.pairs.all(:order=> "rank").each do |p|  
+            pairs<< {
+              :engt => p.english.term,
+              :sts => ((p.status=="r" || p.status=="q" || p.status=="g") ? "rq" : p.status),
+              :src => standarize_sources(p.source)}
+          end
+          q= {'c'=>c.term,  'e'=>pairs}
+          
+          if !sol[ngram_size]
+            sol[ngram_size]= [q]
+          elsif !sol[ngram_size].include?(q)
+            sol[ngram_size]<< q
+          end
+        end
+      end
+    end
+    arr= []
+    sol.each{|k,v| arr<< [k,v]}
+    
+    return arr
+  end
+  
+  
+  
 end
 
 
