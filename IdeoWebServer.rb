@@ -72,16 +72,16 @@ class IdeoWebServer
   
   get '/computa/?' do
     query= params["sourcestring"]
-    if validip(request.ip)
+    pp= if validip(request.ip)
       an= ZhEng_Calc.new(query)
       an.translate
       sol= an.tabulous
-      pp= {"query"=>query, "sol"=>an.tabulous}.to_json
-      response['Access-Control-Allow-Origin'] = '*'
-      return pp
+      {"query"=>query, "sol"=>an.tabulous}.to_json
     else
-      return {"query"=>query, "sol"=>"Sorry, TW not allowed"}.to_json
+      {"query"=>query, "sol"=>"Sorry, TW not allowed"}.to_json
     end
+    response['Access-Control-Allow-Origin'] = '*'
+    return pp
   end
   
   get '/cometopapa/?' do
