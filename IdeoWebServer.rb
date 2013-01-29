@@ -45,16 +45,10 @@ class IdeoWebServer
   helpers do 
     
     def validip(ip)
-      puts "looking for #{ip}"
-      uri = URI::HTTP.build(:scheme=> 'http', :host=> 'geoip.maxmind.com',
-            :path   => '/a', :query=> URI.encode_www_form(:l=> "S85zvqxU2ez8", :i=> ip))
-      response = Net::HTTP.get_response(uri)
-      
-      puts response.body.encode('utf-8', 'iso-8859-1')
-      
-      if response.body.encode('utf-8', 'iso-8859-1')=="US"
-        return false
-      end
+      #uri = URI::HTTP.build(:scheme=> 'http', :host=> 'geoip.maxmind.com',
+      #      :path   => '/a', :query=> URI.encode_www_form(:l=> "S85zvqxU2ez8", :i=> ip))
+      #response = Net::HTTP.get_response(uri)
+      #response.body.encode('utf-8', 'iso-8859-1')!="TW" ? true : false
       true
     end
     
@@ -72,32 +66,40 @@ class IdeoWebServer
   
   get '/computa/?' do
     query= params["sourcestring"]
-    pp= if validip(request.ip)
-      an= ZhEng_Calc.new(query)
-      an.translate
-      sol= an.tabulous
-      {"query"=>query, "sol"=>an.tabulous}.to_json
-    else
-      {"query"=>query, "sol"=>"Sorry, TW not allowed"}.to_json
-    end
+    an= ZhEng_Calc.new(query)
+    an.translate
+    sol= an.tabulous
+    pp= {"query"=>query, "sol"=>an.tabulous}.to_json
     response['Access-Control-Allow-Origin'] = '*'
     return pp
   end
   
   get '/cometopapa/?' do
-    pp= JSON.generate(Pair.retrieve_pairs_by_chinese(params["term"], params["lang"]))
+    pp= if validip(request.ip)
+      JSON.generate(Pair.retrieve_pairs_by_chinese(params["term"], params["lang"]))
+    else
+      nil
+    end
     response['Access-Control-Allow-Origin'] = '*'
     return pp
   end
   
   get '/fuzzy/?' do
+    pp= if validip(request.ip)
+      JSON.generate(Chinese.fuzzysearch(params["term"]))
+    else
+      nil
+    end
     response['Access-Control-Allow-Origin'] = '*'
-    pp= JSON.generate(Chinese.fuzzysearch(params["term"]))
     return pp
   end
   
   get '/deconstruct/?' do
-    pp= JSON.generate(Pair.deconstruct_chinese(params["term"]))
+    pp= if validip(request.ip)
+      JSON.generate(Pair.deconstruct_chinese(params["term"]))
+    else
+      nil
+    end
     response['Access-Control-Allow-Origin'] = '*'
     return pp
   end
