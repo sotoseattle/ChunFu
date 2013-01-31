@@ -2,6 +2,7 @@
 require 'rubygems'
 require 'sinatra'
 #require 'sinatra/base'
+use Rack::Logger
 
 require 'uri'
 require 'net/http'
@@ -43,7 +44,10 @@ class IdeoWebServer
   end
 
   helpers do 
-    
+    def logger
+      request.logger
+    end
+      
     def validip(ip)
       #uri = URI::HTTP.build(:scheme=> 'http', :host=> 'geoip.maxmind.com',
       #      :path   => '/a', :query=> URI.encode_www_form(:l=> "S85zvqxU2ez8", :i=> ip))
@@ -66,6 +70,7 @@ class IdeoWebServer
   
   get '/computa/?' do
     query= params["sourcestring"]
+    logger.info "QUERY-ING: #{query} |by| #{request.ip}"
     an= ZhEng_Calc.new(query)
     an.translate
     sol= an.tabulous
@@ -75,6 +80,7 @@ class IdeoWebServer
   end
   
   get '/cometopapa/?' do
+    logger.info "QUERY-ING: #{params["term"]} |by| #{request.ip}"
     pp= if validip(request.ip)
       JSON.generate(Pair.retrieve_pairs_by_chinese(params["term"], params["lang"]))
     else
@@ -85,6 +91,7 @@ class IdeoWebServer
   end
   
   get '/fuzzy/?' do
+    logger.info "QUERY-ING: #{params["term"]} |by| #{request.ip}"
     pp= if validip(request.ip)
       JSON.generate(Chinese.fuzzysearch(params["term"]))
     else
@@ -95,6 +102,7 @@ class IdeoWebServer
   end
   
   get '/deconstruct/?' do
+    logger.info "QUERY-ING: #{params["term"]} |by| #{request.ip}"
     pp= if validip(request.ip)
       JSON.generate(Pair.deconstruct_chinese(params["term"]))
     else
