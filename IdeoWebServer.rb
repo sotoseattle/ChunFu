@@ -1,29 +1,22 @@
 # encoding: utf-8
 require 'rubygems'
-require 'sinatra'
-#require 'sinatra/base'
-use Rack::Logger
+require 'sinatra/base'
+require "sinatra/reloader" if :development
+require "awesome_print" if :development
 
 require 'uri'
 require 'net/http'
 require 'open-uri'
 
 require 'active_record'
-require 'sinatra/activerecord'
 require 'ar_pg_array'
-
-#require 'json/pure'
-require 'json/ext'
-
-require 'awesome_print'
 
 require './lib/fuzzy/smith_waterman'
 require './lib/kungfu/ZhEng_Calc'
-#load './ZhEng_Calc.rb'
 
 
-db = URI.parse(ENV['DATABASE_URL'] || 'postgres://localhost/langware_development')
-ActiveRecord::Base.configurations["langware_db"] = {
+db = URI.parse(ENV['DATABASE_URL'] || 'postgres://localhost/black')
+ActiveRecord::Base.configurations['langware_db'] = {
   :adapter  => 'postgresql',
   :host     => db.host,
   :port     => db.port,
@@ -34,33 +27,22 @@ ActiveRecord::Base.configurations["langware_db"] = {
 }
 require './model/model_langware'
 
+class IdeoWebServer < Sinatra::Base
 
-class IdeoWebServer
-  
   set :mandarinos, JSON.parse(File.open("./lib/fuzzy/chistohash.json").read)
-
-  configure do 
-    JSON.generator = JSON::Ext::Generator
+  
+  configure :development do
+    register Sinatra::Reloader
   end
 
-  helpers do 
-    def logger
-      request.logger
-    end
-      
-    #def validip(ip)
-    #  #uri = URI::HTTP.build(:scheme=> 'http', :host=> 'geoip.maxmind.com',
-    #  #      :path   => '/a', :query=> URI.encode_www_form(:l=> "S85zvqxU2ez8", :i=> ip))
-    #  #response = Net::HTTP.get_response(uri)
-    #  #response.body.encode('utf-8', 'iso-8859-1')!="TW" ? true : false
-    #  true
-    #end
-    
-  end
-  
-  
   before do
     content_type :html, 'charset' => 'utf-8'
+  end
+
+  helpers do
+    def spannify(header, spanarray, joiner='')
+      "<span><span class='headterm'>#{header}</span> #{spanarray.join(joiner)}</span>"
+    end
   end
   
   get '/' do
@@ -68,51 +50,62 @@ class IdeoWebServer
     erb :index
   end
   
-  get '/computa/?' do
-    query= params["sourcestring"]
-    logger.info "QUERY-ING: (kf) #{query} |by| #{request.ip}"
+  get '/numberutil/?' do
+    query= params[:sourcestring]
     an= ZhEng_Calc.new(query)
     an.translate
     sol= an.tabulous
     pp= {"query"=>query, "sol"=>an.tabulous}.to_json
-    response['Access-Control-Allow-Origin'] = '*'
     return pp
   end
-  
-  get '/cometopapa/?' do
-    logger.info "QUERY-ING: (db) #{params["term"]} |by| #{request.ip}"
-    #pp= if validip(request.ip)
-    #  JSON.generate(Pair.retrieve_pairs_by_chinese(params["term"], params["lang"]))
-    #else
-    #  nil
-    #end
-    pp= JSON.generate(Pair.retrieve_pairs_by_chinese(params["term"], params["lang"]))
-    response['Access-Control-Allow-Origin'] = '*'
-    return pp
+
+  get '/wordutil/?' do
+    chi, lang = params[:term].strip, (params[:lang] || 'ct')
+    pp = Pair.retrieve_pairs_by_chinese(chi, lang)
+    qq = pp[params[:term]].map{|entry| "<span class='#{entry[:sts]}'>#{entry[:engt]}</span>"}
+    return  {"query"=>chi, "sol"=>spannify("Translation #{chi} :<br/>", qq, ', ')}.to_json
   end
   
-  get '/fuzzy/?' do
-    logger.info "QUERY-ING: (fz) #{params["term"]} |by| #{request.ip}"
-    #pp= if validip(request.ip)
-    #  JSON.generate(Chinese.fuzzysearch(params["term"]))
-    #else
-    #  nil
-    #end
-    pp= JSON.generate(Chinese.fuzzysearch(params["term"]))
-    response['Access-Control-Allow-Origin'] = '*'
-    return pp
+  get '/fuzzy_search/?' do
+    chi = params[:term]
+
+    pp= Chinese.fuzzysearch(chi, self)
+
+    qq = pp.map do |entry| 
+
+      unless entry[1]['c'] == chi
+        wordspan = ""
+        entry[1]['c'].each_char do |letter|
+          wordspan << "<span class='#{chi.include?(letter) ? 'v2' : ''}'>#{letter}</span>"
+        end
+        "<span>#{wordspan} : #{entry[1]['e'].join(' // ')}</span><br />"
+      end
+    end
+    return {"query"=>chi, "sol"=>spannify("Fuzzy Search : <br/>", qq)}.to_json
   end
   
   get '/deconstruct/?' do
-    logger.info "QUERY-ING: (dc) #{params["term"]} |by| #{request.ip}"
-    #pp= if validip(request.ip)
-    #  JSON.generate(Pair.deconstruct_chinese(params["term"]))
-    #else
-    #  nil
-    #end
-    pp= JSON.generate(Pair.deconstruct_chinese(params["term"]))
-    response['Access-Control-Allow-Origin'] = '*'
-    return pp
+    chi = params[:term]
+    pp= Pair.deconstruct_chinese(params[:term])
+    
+    qq = []
+    pp.each do |k, v|
+      qq << "<span>#{k} : </span>"
+      qq << v.map{|e| "<span class='#{e[:sts]}'>#{e[:engt]}</span>"}.join(', ')
+      qq << "<br/>"
+    end
+    
+    return {"query"=>chi, "sol"=>spannify("Identified Substrings : <br/>", qq)}.to_json
   end
   
-end
+  error do
+    'shit!'
+  end
+  
+  not_found do
+    'not found'
+  end
+
+
+end  
+

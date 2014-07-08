@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 	<head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		<title>Chinese Numbers WebApp</title>
+		<title>Chun Fú</title>
 		
 		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 		
@@ -16,20 +16,41 @@
 	<body>
 		<div id="horizontal-grid-overlay"></div>
 		<div>
-			<div id="banner">
+			<div class="banner">
 				<span id='head' onclick="window.location.href='/';">
-					<span id="chunfu">Chun Fú</span>&nbsp;(Chinese Numbers Kung Fu)</span>
+					<span id="chunfu">Chun Fú</span>&nbsp;(Traditional Chinese Kung Fu)</span>
+			</div>	
+
+
+			<div class="banner">
+				<span>Numbers Learning Tool &nbsp</span>
 				<div id="tabulary">
-					<input id="sourcestring" name="sourcestring" value="" action="alert('hila')"/>
+					<input id="sourcestring" name="sourcestring" value=""/>
 					<input type="submit" id="mysubmit" value="Convert" />
 				</div>
 			</div>
-			
-        	
+			<div id="intro">
+				Please enter a Chinese Number in the search field. We accept Traditional, Simplified, decimals, negative numbers 			and factors up to 10^12. No fractions or measure words. 			
+				
+				We do not check for well written Chinese, it just tries to make sense of it so, if you input garbage in, you 			should expect garbage out. Example: 一萬兩千三百四十五點六七八九
+			</div>
+
+			<div class="banner">
+				<span>Chinese Word Translation</span>
+				<div id="tabulary2">
+					<input id="term" name="term" value=""/>
+					<input type="submit" id="mysubmit2" value="Look Up" />
+				</div>
+			</div>
+			<div id="intro">
+				Please enter a Chinese Word in Chinese Traditional in the search field. The colors indicate the level of confidence we have on the translation. Fuzzy searches looks for words with all the characters in common and shows them ordered by proximity (Smith–Waterman algorithm).
+			</div>
+      
+
 			<%= yield %>
 			
 			<div id="footer">
-				<p>Xinaptic LLC © 2013</p>
+				<p>Javier Soto © 2014</p>
 				<div id="sources">
 					<p><a href="http://rubytree.rubyforge.org/">RubyTree</a> © by Anupam Sengupta, 2012. <a href="http://code.drewwilson.com/entry/tiptip-jquery-plugin">TipTip</a> © by Drew Wilson, 2010.</p>
 				</div>

@@ -7,11 +7,9 @@ margin-top: 1%;
 font-family: garamond, geneva;
 }
 
-
-
 /*  HEADER AND FOOTER  */
 
-#banner{
+.banner{
   width: auto;
   text-align:center;
   margin-left: auto ;
@@ -32,10 +30,10 @@ color:#792a2f;
 
 #chunfu{
   color: #BE0000;
-  font-size: 1.4em;
+  font-size: 2.4em;
 }
 
-#tabulary {
+#tabulary, #tabulary2 {
 /*float: right;*/
 display: inline;
 width: 20%;
@@ -43,11 +41,11 @@ padding-left: 1%;
 /*padding-top: 3.5%;*/
 }
 
-#mysubmit {
+#mysubmit, #mysubmit2 {
 box-shadow: 3px 3px 2px #63544f;
 }
 
-#sourcestring {
+#sourcestring, #term {
 border-radius: 3px 3px 3px 3px;
 box-shadow: 1px 1px 1px #0D0D0D;
 margin-bottom: 1%; 
@@ -183,4 +181,35 @@ padding-left: 100;
 	background: url(../images/grid-horz.png);
 	display: none;
 	padding: 10px;
+}
+
+/* WORD UTIL */
+
+.headterm{
+  color: #BE0000;
+  font-size: 1.4em;
+  padding-bottom: 14px;
+}
+
+.v {
+  color: #008A2E;
+  font-size: 1.4em;
+}
+.v2 {
+  color: #008A2E;
+  font-size: 1.0em;
+}
+
+.c {
+  color: #00A3CC;
+  font-size: 1.3em;
+}
+.rq {
+  color: #B87070;
+  font-size: 1.0em;
+}
+
+#expo, #expo2, #expo3 {
+  padding-top:20px;
+  padding-bottom:4px;
 }

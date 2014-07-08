@@ -10,18 +10,19 @@ var formulaic = {
     return true;
   },
   
-  callServer: function(chinumber){
+  call_server_with_number: function(chinumber){
     $.ajax({
-		  url: '/computa',
+		  url: '/numberutil',
 		  type: "get",
 		  data: {sourcestring: chinumber},
 		  success: function(data){
 		    // turn on-off the grid to check alignment
 		    //$("#horizontal-grid-overlay").css("display", "block");
 		    
-		    
 		    $("input#sourcestring").val("");
 		    $("#expo").html("");
+		    $("#expo2").html("");
+	      $("#expo3").html("");
 		    
 		    answer= $.parseJSON(data)
 		    $("#expo").append(answer.sol)
@@ -36,22 +37,82 @@ var formulaic = {
 		  error: function(){
 		    $("#expo").html("<div id='intro'>Something went horribly wrong. Please post bellow the Chinese number that you tried so we can search for the \'bug\'.</div>");
 		  }
-		});
+		})
+	},
+
+	call_server_with_word: function(chiword){
+    $.ajax({
+	    url: '/wordutil',
+	    type: "get",
+	    data: {term: chiword},
+	    success: function(data){
+	      $("input#term").val("");
+	      $("#expo").html("");
+	      $("#expo2").html("");
+	      $("#expo3").html("");
+	      
+	      answer= $.parseJSON(data)
+	      $("#expo").append(answer.sol)
+
+	      formulaic.call_server_deconstruct(chiword);
+
+	    },
+	    error: function(){
+	      $("#expo").html("<div id='intro'>Something went horribly wrong. Please post bellow the Chinese number that you tried so we can search for the \'bug\'.</div>");
+	    }
+	  })
   },
-	
+
+  call_server_deconstruct: function(chiword){
+    $.ajax({
+	    url: '/deconstruct',
+	    type: "get",
+	    data: {term: chiword},
+	    success: function(data){	      
+	      answer= $.parseJSON(data)
+	      $("#expo2").append(answer.sol)
+
+	      formulaic.call_server_fuzzy(chiword);
+	    },
+	    error: function(){
+	      $("#expo2").html("<div id='intro'>Something went horribly wrong. Please post bellow the Chinese number that you tried so we can search for the \'bug\'.</div>");
+	    }
+	  })
+  },
+
+	call_server_fuzzy: function(chiword){
+    $.ajax({
+	    url: '/fuzzy_search',
+	    type: "get",
+	    data: {term: chiword},
+	    success: function(data){	      
+	      answer= $.parseJSON(data)
+	      $("#expo3").append(answer.sol)
+	    },
+	    error: function(){
+	      $("#expo3").html("<div id='intro'>Something went horribly wrong. Please post bellow the Chinese number that you tried so we can search for the \'bug\'.</div>");
+	    }
+	  })
+  },
+  
 	turn_on_form: function(){
 		$("input#mysubmit").click(function(){
 		  $("table#tabulary > tbody > tr").remove();
 		  chinumber= $("input#sourcestring").val();
 		  if (formulaic.validate(chinumber)){
-		    formulaic.callServer(chinumber)
+		    formulaic.call_server_with_number(chinumber)
 		  } else {
 		    console.log("WRONG INPUT");
 		    $("#expo").html("<div id='intro'><p>I am sorry, the input string \'"+chinumber+"\' is not recognized. Only the following characters are valid:</p><p>"+allowed.toString()+"</p></div>");
 		  }
 		  
-		  
+		});
+		$("input#mysubmit2").click(function(){
+		  $("table#tabulary > tbody > tr").remove();
+		  chiword= $("input#term").val();
+		  formulaic.call_server_with_word(chiword)		  
 		})
+
 	}
 }
 

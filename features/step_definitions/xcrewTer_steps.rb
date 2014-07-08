@@ -1,4 +1,4 @@
-require './ZhEng_Calc'
+require './lib/kungfu/ZhEng_Calc'
 
 Given /^the original chinese number is "([^"]*)"$/ do |e|
   @x = ZhEng_Calc.new(e)
@@ -28,7 +28,7 @@ Then /^the number in standard form is "(.*?)"$/ do |std|
 end
 
 Then /^the number in precomputed form is "(.*?)"$/ do |prc|
-  @x.numb.to_f.to_s.should == prc
+  (@x.numb.to_f - prc.to_f).should be < 1e-10
 end
 
 Then /^it should show as "(.*?)"$/ do |eng|

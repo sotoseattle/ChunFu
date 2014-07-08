@@ -37,9 +37,7 @@ end
 
 class StringAlign
 
-  #SCORE_INSERT =  0
-  #SCORE_DELETE =  -1
-  #SCORE_MISS   = -1
+  #SCORE_INSERT =  0; SCORE_DELETE =  -1; SCORE_MISS   = -1
   SCORE_INSERT =  -1
   SCORE_DELETE =  -1
   SCORE_MISS   = -1
