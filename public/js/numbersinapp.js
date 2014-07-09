@@ -119,6 +119,8 @@ var formulaic = {
 $(document).keypress(function(e) {
   if(e.which == 13 && $("#sourcestring:focus").length==1) {
     $("input#mysubmit").click();
+  } else if (e.which == 13 && $("#term:focus").length==1) {
+  	$("input#mysubmit2").click();
   }
 });
 

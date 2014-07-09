@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-require 'ar_pg_array'
 
 class Chinese < ActiveRecord::Base
   establish_connection 'langware_db'

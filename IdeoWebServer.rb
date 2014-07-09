@@ -2,14 +2,8 @@
 require 'rubygems'
 require 'sinatra/base'
 require "sinatra/reloader" if :development
-require "awesome_print" if :development
-
-require 'uri'
-require 'net/http'
-require 'open-uri'
 
 require 'active_record'
-require 'ar_pg_array'
 
 require './lib/fuzzy/smith_waterman'
 require './lib/kungfu/ZhEng_Calc'

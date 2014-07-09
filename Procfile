@@ -1,1 +1,1 @@
-web: bundle exec ruby IdeoWebServer.rb -p $PORT
+web: bundle exec rackup -s thin -p $PORT
