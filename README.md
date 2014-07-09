@@ -15,4 +15,4 @@ Includes:
 * Access to Postgres database w/ ActiveRecord
 * Smith Waterman Algorithm
 
-Live from Seattle at (chunfu.herokuapp.com)[chunfu.herokuapp.com]
+Live from Seattle at [chunfu.herokuapp.com](chunfu.herokuapp.com)
