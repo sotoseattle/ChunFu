@@ -24,7 +24,8 @@ require './model/model_langware'
 class IdeoWebServer < Sinatra::Base
 
   set :mandarinos, JSON.parse(File.open("./lib/fuzzy/chistohash.json").read)
-  
+  set :static_cache_control, [:public, max_age: 60 * 60 * 24 * 30]
+
   configure :development do
     register Sinatra::Reloader
   end

@@ -1,0 +1,33 @@
+body{width:800px;margin-right:auto;margin-left:auto;margin-top:1%;font-family:garamond, geneva;}
+.banner{width:auto;text-align:center;margin-left:auto;margin-right:auto;margin-top:3%;margin-bottom:3%;}
+#head{padding-right:0;padding-top:3.75%;padding-left:3%;color:#792a2f;}
+#chunfu{color:#BE0000;font-size:2.4em;}
+#tabulary, #tabulary2{display:inline;width:20%;padding-left:1%;}
+#mysubmit, #mysubmit2{box-shadow:3px 3px 2px #63544f;}
+#sourcestring, #term{border-radius:3px 3px 3px 3px;box-shadow:1px 1px 1px #0D0D0D;margin-bottom:1%;}
+hr{margin-right:auto;margin-left:auto;border:none;background-color:#0F153D;height:2px;}
+#footer{position:bottom;font-size:90%;padding-top:3.75%;padding-left:3%;}
+#sources{font-size:80%;}
+#intro{margin-left:15%;margin-right:15%;margin-top:30px;margin-bottom:30px;}
+#expo{clear:both;}
+#tabulous{margin:auto;font-family:geneva;}
+#tabulous > th,tr,td{color:black;padding-top:7px;padding-bottom:4px;text-align:center;vertical-align:top;white-space:nowrap;}
+#tabulous td{padding-left:7px;padding-right:7px;}
+#tabulous td table{width:99%;}
+#top{padding-left:10%;padding-top:2%;padding-bottom:0;}
+#topnumber{}
+span.vip{background-color:#FF9;}
+.together{border-collapse:collapse;}
+td.low{vertical-align:bottom;}
+a{color:#bc3539;}
+a:hover{color:#7b2c31;}
+.separate{border-top:1px solid #BE0000;}
+.join{border-top:1px solid green;}
+.summary{border-top-style:double;border-top-color:grey;}
+#horizontal-grid-overlay{position:absolute;width:100%;height:100%;top:0;left:0;background:url(../images/grid-horz.png);display:none;padding:10px;}
+.headterm{color:#BE0000;font-size:1.4em;padding-bottom:14px;}
+.v{color:#008A2E;font-size:1.4em;}
+.v2{color:#008A2E;font-size:1.0em;}
+.c{color:#00A3CC;font-size:1.3em;}
+.rq{color:#B87070;font-size:1.0em;}
+#expo, #expo2, #expo3{padding-top:20px;padding-bottom:4px;}
